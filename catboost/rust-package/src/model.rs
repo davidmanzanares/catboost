@@ -44,6 +44,7 @@ impl Model {
         &self,
         float_features: Vec<Vec<f32>>,
         cat_features: Vec<Vec<String>>,
+        num_classes: usize,
     ) -> CatBoostResult<Vec<f64>> {
         let mut float_features_ptr = float_features
             .iter()
@@ -70,7 +71,7 @@ impl Model {
             .map(|x| x.as_ptr())
             .collect::<Vec<_>>();
 
-        let mut prediction = vec![0.0; float_features.len()];
+        let mut prediction = vec![0.0; float_features.len() * num_classes];
         CatBoostError::check_return_value(unsafe {
             catboost_sys::CalcModelPredictionWithHashedCatFeatures(
                 self.handle,
